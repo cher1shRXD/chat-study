@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 const auth = async (req, res, next) => {
   try {
@@ -10,7 +11,8 @@ const auth = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    req.user = decoded;
+    const user = await User.findById(decoded.id).select('-refreshToken -password -email -chatrooms');
+    req.user = user;
     next();
   } catch (error) {
     if (error.name == "TokenExpiredError") {
