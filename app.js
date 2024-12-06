@@ -1,14 +1,17 @@
 const express = require("express");
 const cors = require("cors");
+const http = require("http");
 const mongoose = require("mongoose");
 const authRouter = require("./routers/authRouter");
 const roomRouter = require("./routers/roomRouter");
+const sendRouter = require("./routers/sendRouter");
+const socket = require("./socket");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 8080;
 
 const corsOption = {
-  origin: ["http://localhost:5173"],
+  origin: ["http://localhost:5173", "http://10.80.163.21:5173"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -28,8 +31,25 @@ mongoose
 
 app.use("/auth", authRouter);
 app.use("/room", roomRouter);
+app.use("/send", sendRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const server = http.createServer(app);
+
+const io = socket.init(server);
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("joinRoom", (room) => {
+    socket.join(room);
+    console.log(`User joined room: ${room}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
 });
 
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

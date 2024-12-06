@@ -7,12 +7,7 @@ const userSchema = new mongoose.Schema(
     nickname: { type: String, required: true },
     password: { type: String, required: true },
     refreshToken: String,
-    chatrooms: [
-      {
-        type: mongoose.Schema.Types.Mixed,
-        ref: "Chatroom",
-      },
-    ],
+    chatrooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Chatroom" }],
   },
   {
     timestamps: true,

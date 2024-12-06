@@ -5,12 +5,12 @@ const chatroomSchema = new mongoose.Schema(
     name: { type: String, required: true },
     chats: [
       {
-        sender: { type: mongoose.Schema.Types.Mixed }, // Mixed 타입으로 수정
+        sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         message: { type: String, required: true },
       },
     ],
-    members: [{ type: mongoose.Schema.Types.Mixed }], // Mixed 타입으로 유지
-    founder: { type: mongoose.Schema.Types.Mixed }, // Mixed 타입으로 유지
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    founder: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     joinCode: { type: String, required: true, unique: true },
   },
   {
